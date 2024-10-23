@@ -1,11 +1,37 @@
 const User = require("../models/users");
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send(users))
+const {
+  DATA_NOT_FOUND_CODE,
+  SUCCESSFUL_REQUEST_CODE,
+  NEW_RESOURCE_CREATED_CODE,
+  INVALID_DATA_CODE,
+  DEFAULT_ERROR_CODE,
+} = require("../utils/errors");
+
+const createUsers = (req, res) => {
+  console.log("createUsers has run");
+  const { name, avatar } = req.body;
+  User.create({ name, avatar })
+    .then((user) => res.status(NEW_RESOURCE_CREATED_CODE).send(user))
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
+
+      // if (err.name === "ValidationError") {
+      //   res.status(INVALID_DATA_CODE).send({ message: err.message });
+      // } else {
+      //   res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
+      // }
+    });
+};
+
+const getUsers = (req, res) => {
+  console.log("getUsers has run");
+  User.find({})
+    .then((users) => res.status(SUCCESSFUL_REQUEST_CODE).send(users))
+    .catch((err) => {
+      console.error(err);
+      return res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
     });
 };
 
@@ -13,30 +39,17 @@ const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.status(SUCCESSFUL_REQUEST_CODE).send(user))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        // return res.status(400).send({ message: err.message });
+        return res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
       } else if (err.name === "CastError") {
+        return res.status(INVALID_DATA_CODE).send({ message: err.message });
       }
 
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
     });
 };
 
-const createUsers = (req, res) => {
-  const { name, avatar } = req.body;
-  User.create({ name, avatar })
-    .then((user) => res.status(201).send(user))
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
-      }
-
-      return res.status(500).send({ message: err.message });
-    });
-};
-
-module.exports = { getUsers, createUsers, getUser };
+module.exports = { createUsers, getUsers, getUser };
