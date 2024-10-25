@@ -12,16 +12,16 @@ const createUsers = (req, res) => {
   console.log("createUsers has run");
   const { name, avatar } = req.body;
   User.create({ name, avatar })
-    .then((user) => res.status(NEW_RESOURCE_CREATED_CODE).send(user))
+    .then((user) => res.status(SUCCESSFUL_REQUEST_CODE).send(user))
     .catch((err) => {
       console.error(err);
-      return res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
+      // return res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
 
-      // if (err.name === "ValidationError") {
-      //   res.status(INVALID_DATA_CODE).send({ message: err.message });
-      // } else {
-      //   res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
-      // }
+      if (err.name === "ValidationError") {
+        res.status(INVALID_DATA_CODE).send({ message: err.message });
+      } else {
+        res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
+      }
     });
 };
 
@@ -36,6 +36,8 @@ const getUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
+  console.log("getUser has run");
+
   const { userId } = req.params;
   User.findById(userId)
     .orFail()
