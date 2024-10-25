@@ -3,7 +3,6 @@ const User = require("../models/users");
 const {
   DATA_NOT_FOUND_CODE,
   SUCCESSFUL_REQUEST_CODE,
-  NEW_RESOURCE_CREATED_CODE,
   INVALID_DATA_CODE,
   DEFAULT_ERROR_CODE,
 } = require("../utils/errors");
@@ -45,7 +44,7 @@ const getUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
+        res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
       } else if (err.name === "CastError") {
         return res.status(INVALID_DATA_CODE).send({ message: err.message });
       }

@@ -26,7 +26,7 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(">>>> CREATE ITEM", err.name);
       if (err.name === "ValidationError") {
-        return res.status(INVALID_DATA_CODE).send({ message: err.message });
+        res.status(INVALID_DATA_CODE).send({ message: err.message });
       } else {
         return res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
       }
@@ -49,7 +49,7 @@ const deleteItem = (req, res) => {
   console.log("deleteItem has run");
   const { itemId } = req.params;
   ClothingItem.findByIdAndDelete(itemId)
-    .orFail() //new Error("Item not found")
+    .orFail()
     .then((item) => res.status(SUCCESSFUL_REQUEST_CODE).send(item))
     .catch((err) => {
       console.error(">>>> DELETE ITEM", err.name);
@@ -58,7 +58,7 @@ const deleteItem = (req, res) => {
         return res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
       }
       if (err.name === "CastError") {
-        return res.status(INVALID_DATA_CODE).send({ message: err.message });
+        res.status(INVALID_DATA_CODE).send({ message: err.message });
       } else {
         return res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
       }
@@ -85,7 +85,7 @@ const likeItem = (req, res) => {
         return res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
       }
       if (err.name === "CastError") {
-        return res.status(INVALID_DATA_CODE).send({ message: err.message });
+         res.status(INVALID_DATA_CODE).send({ message: err.message });
       } else {
         return res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
       }
@@ -106,7 +106,7 @@ const dislikeItem = (req, res) => {
     .catch((err) => {
       console.error("dislikeItem<<<<<<<<", err.name);
       if (err.name === "CastError") {
-        return res.status(INVALID_DATA_CODE).send({ message: err.message });
+         res.status(INVALID_DATA_CODE).send({ message: err.message });
       } else {
         return res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
       }
