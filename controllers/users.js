@@ -44,7 +44,7 @@ const getUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
+        return res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
       } else if (err.name === "CastError") {
         return res.status(INVALID_DATA_CODE).send({ message: err.message });
       }

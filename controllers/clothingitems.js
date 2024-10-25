@@ -55,7 +55,7 @@ const deleteItem = (req, res) => {
       console.error(">>>> DELETE ITEM", err.name);
 
       if (err.name === "DocumentNotFoundError") {
-        return res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
+        res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
       }
       if (err.name === "CastError") {
         res.status(INVALID_DATA_CODE).send({ message: err.message });
@@ -82,10 +82,10 @@ const likeItem = (req, res) => {
       console.error(">>>> LIKE ITEM", err.name);
 
       if (err.name === "DocumentNotFoundError") {
-        return res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
+        res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
       }
       if (err.name === "CastError") {
-         res.status(INVALID_DATA_CODE).send({ message: err.message });
+        res.status(INVALID_DATA_CODE).send({ message: err.message });
       } else {
         return res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
       }
@@ -106,7 +106,7 @@ const dislikeItem = (req, res) => {
     .catch((err) => {
       console.error("dislikeItem<<<<<<<<", err.name);
       if (err.name === "CastError") {
-         res.status(INVALID_DATA_CODE).send({ message: err.message });
+        res.status(INVALID_DATA_CODE).send({ message: err.message });
       } else {
         return res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
       }
