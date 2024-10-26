@@ -41,9 +41,9 @@ const getItems = (req, res) => {
   // console.log("getItems has run");
   ClothingItem.find({})
     .then((items) => res.status(SUCCESSFUL_REQUEST_CODE).send(items))
-    .catch((err) => {
-      res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
-    });
+    .catch((err) =>
+      res.status(DEFAULT_ERROR_CODE).send({ message: err.message })
+    );
 };
 
 const deleteItem = (req, res) => {

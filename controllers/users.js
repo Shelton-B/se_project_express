@@ -28,9 +28,9 @@ const getUsers = (req, res) => {
   // console.log("getUsers has run");
   User.find({})
     .then((users) => res.status(SUCCESSFUL_REQUEST_CODE).send(users))
-    .catch((err) => {
-      res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
-    });
+    .catch((err) =>
+      res.status(DEFAULT_ERROR_CODE).send({ message: err.message })
+    );
 };
 
 const getUser = (req, res) => {
