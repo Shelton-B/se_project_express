@@ -83,8 +83,7 @@ const likeItem = (req, res) => {
 
       if (err.name === "DocumentNotFoundError") {
         res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
-      }
-      if (err.name === "CastError") {
+      } else if (err.name === "CastError") {
         res.status(INVALID_DATA_CODE).send({ message: err.message });
       } else {
         return res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
