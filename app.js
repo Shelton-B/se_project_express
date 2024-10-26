@@ -25,6 +25,6 @@ app.listen(PORT, () => {
   console.log("This is working");
 });
 
-// module.exports.createClothingItem = (req, res) => {
-//   console.log(req.user._id);
-// };
+module.exports.createClothingItem = (req, res) => {
+  console.log(req.user._id);
+};
