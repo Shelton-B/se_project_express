@@ -12,14 +12,16 @@
   "author": "Shelton Brockett",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^3.1.7",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.29.1"
+    "eslint-plugin-import": "^2.29.1",
+    "nodemon": "^3.1.7"
   },
   "dependencies": {
+    "eslint-config-prettier": "^9.1.0",
     "express": "^4.21.0",
     "mongoose": "^6.6.1",
+    "prettier": "^3.3.3",
     "validator": "^13.12.0"
   }
 }
