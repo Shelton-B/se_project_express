@@ -1,13 +1,13 @@
 const router = require("express").Router();
 const clothingItem = require("./clothingitems");
 const userRouter = require("./users");
-const { DEFAULT_ERROR_CODE } = require("../utils/errors");
+const { DATA_NOT_FOUND_CODE } = require("../utils/errors");
 
 router.use("/users", userRouter);
 router.use("/items", clothingItem);
 
-router.use((req, res, err) => {
-  res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
+router.use((req, res) => {
+  res.status(DATA_NOT_FOUND_CODE).send({ message: "Route not found" });
 });
 
 module.exports = router;
