@@ -24,7 +24,7 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(SUCCESSFUL_REQUEST_CODE).send(items))
-    .catch((err) =>
+    .catch(() =>
       res
         .status(DEFAULT_ERROR_CODE)
         .send({ message: "An error has occurred on the server" }),
