@@ -33,4 +33,6 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+//add finduserbycridentials to schema
+
 module.exports = mongoose.model("user", userSchema);

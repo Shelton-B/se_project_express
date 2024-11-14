@@ -5,16 +5,16 @@ const app = express();
 
 const { PORT = 3001 } = process.env;
 
-const { createUsers, userLogIn } = require(".//controllers/users");
+const { createUser, userLogIn } = require(".//controllers/users");
+
+app.use(express.json());
 
 app.post("/signin", userLogIn);
-app.post("/signup", createUsers);
+app.post("/signup", createUser);
 
 mongoose.connect("mongodb://127.0.0.1:27017/wtwr_db");
 
 const routes = require("./routes/index");
-
-app.use(express.json());
 
 app.use((req, res, next) => {
   req.user = {

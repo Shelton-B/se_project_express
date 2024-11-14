@@ -9,6 +9,7 @@ const {
   DEFAULT_ERROR_CODE,
   NEW_RESOURCE_CREATED_CODE,
   UNAUTHORIZED_STATUS_CODE,
+  CONFLICT_ERROR_CODE,
 } = require("../utils/errors");
 
 const { JWT_SECRET } = require("../utils/config");
@@ -29,45 +30,55 @@ const userLogIn = (req, res) => {
     });
 };
 
-// const createUsers = (req, res) => {
-//   const { name, avatar } = req.body;
-//   User.create({ name, avatar })
-//     .then((user) => res.status(SUCCESSFUL_REQUEST_CODE).send(user))
-//     .catch((err) => {
-//       if (err.name === "ValidationError") {
-//         res.status(INVALID_DATA_CODE).send({ message: err.message });
-//       } else {
-//         res
-//           .status(DEFAULT_ERROR_CODE)
-//           .send({ message: "An error has occurred on the server" });
-//       }
-//     });
-// };
-
 const createUsers = (req, res) => {
+  const { name, avatar } = req.body;
+  User.create({ name, avatar })
+    .then((user) => res.status(SUCCESSFUL_REQUEST_CODE).send(user))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(INVALID_DATA_CODE).send({ message: err.message });
+      } else {
+        res
+          .status(DEFAULT_ERROR_CODE)
+          .send({ message: "An error has occurred on the server" });
+      }
+    });
+};
+
+const createUser = (req, res) => {
+  console.log("createUser has run");
+
   const { name, avatar, email, password } = req.body;
 
   User.findOne({ email })
     .then((existingUser) => {
+      console.log("Checking if user already exists...");
       if (existingUser) {
+        console.log("User exists:", existingUser);
         return Promise.reject(new Error("This email already exists"));
       }
+      console.log("User does not exist, hashing password...");
       return bcrypt.hash(password, 10);
     })
     .then((hash) => {
+      console.log("Password hashed, creating user...");
       return User.create({ name, avatar, email, password: hash });
     })
     .then((newUser) => {
-      res.status(SUCCESSFUL_REQUEST_CODE).send({
-        name: newUser.name,
-        avatar: newUser.avatar,
-        email: newUser.email,
-      });
+      console.log("User created:", newUser);
+      res.status(SUCCESSFUL_REQUEST_CODE).send([
+        {
+          name: newUser.name,
+          avatar: newUser.avatar,
+          email: newUser.email,
+        },
+      ]);
     })
     .catch((err) => {
+      console.error("Error:", err);
       if (err.code === 11000) {
         return res
-          .status(INVALID_DATA_CODE)
+          .status(CONFLICT_ERROR_CODE)
           .send({ message: "This email already exists" });
       }
       if (err.name === "ValidationError") {
@@ -108,4 +119,4 @@ const getUser = (req, res) => {
     });
 };
 
-module.exports = { createUsers, getUsers, getUser, userLogIn };
+module.exports = { createUsers, getUsers, getUser, userLogIn, createUser };
