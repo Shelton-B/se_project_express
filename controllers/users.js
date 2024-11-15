@@ -14,34 +14,29 @@ const {
 
 const { JWT_SECRET } = require("../utils/config");
 
+const getCurrentUser = (req, res) => {};
+
+const updateProfile = (req, res) => {};
+
 const userLogIn = (req, res) => {
+  console.log("userLogin has run");
   const { email, password } = req.body;
+
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      console.log(user);
+
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
+      console.log(token);
       res.status(SUCCESSFUL_REQUEST_CODE).send({ token });
     })
     .catch((err) => {
+      console.error("error", err);
       res
         .status(UNAUTHORIZED_STATUS_CODE)
         .send({ message: "Invalid email or password" });
-    });
-};
-
-const createUsers = (req, res) => {
-  const { name, avatar } = req.body;
-  User.create({ name, avatar })
-    .then((user) => res.status(SUCCESSFUL_REQUEST_CODE).send(user))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(INVALID_DATA_CODE).send({ message: err.message });
-      } else {
-        res
-          .status(DEFAULT_ERROR_CODE)
-          .send({ message: "An error has occurred on the server" });
-      }
     });
 };
 
@@ -90,6 +85,23 @@ const createUser = (req, res) => {
     });
 };
 
+// >>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<< \\
+
+const createUsers = (req, res) => {
+  const { name, avatar } = req.body;
+  User.create({ name, avatar })
+    .then((user) => res.status(SUCCESSFUL_REQUEST_CODE).send(user))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(INVALID_DATA_CODE).send({ message: err.message });
+      } else {
+        res
+          .status(DEFAULT_ERROR_CODE)
+          .send({ message: "An error has occurred on the server" });
+      }
+    });
+};
+
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(SUCCESSFUL_REQUEST_CODE).send(users))
@@ -119,4 +131,12 @@ const getUser = (req, res) => {
     });
 };
 
-module.exports = { createUsers, getUsers, getUser, userLogIn, createUser };
+module.exports = {
+  createUsers,
+  getUsers,
+  getUser,
+  userLogIn,
+  createUser,
+  getCurrentUser,
+  updateProfile,
+};
