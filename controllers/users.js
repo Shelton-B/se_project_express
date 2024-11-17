@@ -1,22 +1,72 @@
-const User = require("../models/users");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const User = require("../models/users");
 
 const {
   DATA_NOT_FOUND_CODE,
   SUCCESSFUL_REQUEST_CODE,
   INVALID_DATA_CODE,
   DEFAULT_ERROR_CODE,
-  NEW_RESOURCE_CREATED_CODE,
   UNAUTHORIZED_STATUS_CODE,
   CONFLICT_ERROR_CODE,
 } = require("../utils/errors");
 
 const { JWT_SECRET } = require("../utils/config");
 
-const getCurrentUser = (req, res) => {};
+const getCurrentUser = (req, res) => {
+  console.log("getCurrentUser has run");
 
-const updateProfile = (req, res) => {};
+  const userId = req.user._id;
+
+  User.findById(userId)
+    .orFail()
+    .then((user) => {
+      console.log("User Found:", user);
+      res.status(SUCCESSFUL_REQUEST_CODE).send(user);
+    })
+    .catch((err) => {
+      console.error("Error:", err);
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(DATA_NOT_FOUND_CODE)
+          .send({ message: "User not found" });
+      }
+      return res
+        .status(DEFAULT_ERROR_CODE)
+        .send({ message: "An error occurred on the server" });
+    });
+};
+
+// verify getCurrentUser is executing correctly
+
+const updateProfile = (req, res) => {
+  const userId = req.user._id;
+  const { name, avatar } = req.body;
+  return User.findByIdAndUpdate(
+    userId,
+    { name, avatar },
+    { new: true, runValidators: true },
+  )
+    .orFail()
+    .then((user) => {
+      res.status(SUCCESSFUL_REQUEST_CODE).send(user);
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res
+          .status(INVALID_DATA_CODE)
+          .send({ message: "Validation error" });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(DATA_NOT_FOUND_CODE)
+          .send({ message: "User not found" });
+      }
+      return res
+        .status(DEFAULT_ERROR_CODE)
+        .send({ message: "An error has occurred on the server" });
+    });
+};
 
 const userLogIn = (req, res) => {
   console.log("userLogin has run");
@@ -24,12 +74,11 @@ const userLogIn = (req, res) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      console.log(user);
+      console.log("userLogIn controller has run", user);
 
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      console.log(token);
       res.status(SUCCESSFUL_REQUEST_CODE).send({ token });
     })
     .catch((err) => {
