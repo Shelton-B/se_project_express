@@ -71,6 +71,8 @@ const updateProfile = (req, res) => {
 const userLogIn = (req, res) => {
   console.log("userLogin has run");
   const { email, password } = req.body;
+  if (!email || !password)
+    return res.status(INVALID_DATA_CODE).send({ message: "Bad request" });
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -94,29 +96,30 @@ const createUser = (req, res) => {
 
   const { name, avatar, email, password } = req.body;
 
-  User.findOne({ email })
-    .then((existingUser) => {
-      console.log("Checking if user already exists...");
-      if (existingUser) {
-        console.log("User exists:", existingUser);
-        return Promise.reject(new Error("This email already exists"));
-      }
-      console.log("User does not exist, hashing password...");
-      return bcrypt.hash(password, 10);
-    })
+  // User.findOne({ email })
+  //   .then((existingUser) => {
+  //     console.log("Checking if user already exists...");
+  //     if (existingUser) {
+  //       console.log("User exists:", existingUser)
+  //     const error = new Error("This email already exists")
+  //       return Promise.reject(new Error("This email already exists"));
+  //     }
+  //     console.log("User does not exist, hashing password...");
+  //     return bcrypt.hash(password, 10);
+  //   })
+  bcrypt
+    .hash(password, 10)
     .then((hash) => {
       console.log("Password hashed, creating user...");
       return User.create({ name, avatar, email, password: hash });
     })
     .then((newUser) => {
       console.log("User created:", newUser);
-      res.status(SUCCESSFUL_REQUEST_CODE).send([
-        {
-          name: newUser.name,
-          avatar: newUser.avatar,
-          email: newUser.email,
-        },
-      ]);
+      res.status(SUCCESSFUL_REQUEST_CODE).send({
+        name: newUser.name,
+        avatar: newUser.avatar,
+        email: newUser.email,
+      });
     })
     .catch((err) => {
       console.error("Error:", err);
