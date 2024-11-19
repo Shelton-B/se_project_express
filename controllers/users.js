@@ -92,29 +92,18 @@ const userLogIn = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  console.log("createUser has run");
-
   const { name, avatar, email, password } = req.body;
 
-  // User.findOne({ email })
-  //   .then((existingUser) => {
-  //     console.log("Checking if user already exists...");
-  //     if (existingUser) {
-  //       console.log("User exists:", existingUser)
-  //     const error = new Error("This email already exists")
-  //       return Promise.reject(new Error("This email already exists"));
-  //     }
-  //     console.log("User does not exist, hashing password...");
-  //     return bcrypt.hash(password, 10);
-  //   })
-  bcrypt
-    .hash(password, 10)
-    .then((hash) => {
-      console.log("Password hashed, creating user...");
-      return User.create({ name, avatar, email, password: hash });
+  return User.findOne({ email })
+    .then((existingUser) => {
+      if (existingUser) {
+        console.log("User exists:", existingUser);
+        throw new Error("This email already exists");
+      }
+      return bcrypt.hash(password, 10);
     })
+    .then((hash) => User.create({ name, avatar, email, password: hash }))
     .then((newUser) => {
-      console.log("User created:", newUser);
       res.status(SUCCESSFUL_REQUEST_CODE).send({
         name: newUser.name,
         avatar: newUser.avatar,
@@ -123,7 +112,8 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       console.error("Error:", err);
-      if (err.code === 11000) {
+
+      if (err.message === "This email already exists" || err.code === 11000) {
         return res
           .status(CONFLICT_ERROR_CODE)
           .send({ message: "This email already exists" });
