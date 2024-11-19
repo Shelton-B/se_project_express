@@ -58,22 +58,3 @@ userSchema.statics.findUserByCredentials = function (email, password) {
 // add finduserbycridentials to schema
 
 module.exports = mongoose.model("user", userSchema);
-
-// console.log("userLogin has run");
-// const { email, password } = req.body;
-//   .then((user) => {
-//     console.log(user);
-
-//     const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-//       expiresIn: "7d",
-//     });
-//     console.log(token);
-//     res.status(SUCCESSFUL_REQUEST_CODE).send({ token });
-//   })
-//   .catch((err) => {
-//     console.error("error", err);
-//     res
-//       .status(UNAUTHORIZED_STATUS_CODE)
-//       .send({ message: "Invalid email or password" });
-//   });
-// };
