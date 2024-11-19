@@ -70,6 +70,7 @@ const updateProfile = (req, res) => {
 
 const userLogIn = (req, res) => {
   console.log("userLogin has run");
+
   const { email, password } = req.body;
   if (!email || !password)
     return res.status(INVALID_DATA_CODE).send({ message: "Bad request" });
