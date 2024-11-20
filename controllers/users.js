@@ -86,9 +86,12 @@ const userLogIn = (req, res) => {
     })
     .catch((err) => {
       console.error("error", err);
-      res
-        .status(UNAUTHORIZED_STATUS_CODE)
-        .send({ message: "Invalid email or password" });
+
+      if (err.message === "Incorrect email or password") {
+        return res
+          .status(UNAUTHORIZED_STATUS_CODE)
+          .send({ message: "Invalid email or password" });
+      }
     });
 };
 
