@@ -55,6 +55,4 @@ userSchema.statics.findUserByCredentials = function (email, password) {
     });
 };
 
-// add finduserbycridentials to schema
-
 module.exports = mongoose.model("user", userSchema);

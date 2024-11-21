@@ -85,13 +85,14 @@ const userLogIn = (req, res) => {
       res.status(SUCCESSFUL_REQUEST_CODE).send({ token });
     })
     .catch((err) => {
-      console.error("error", err);
-
-      if (err.message === "Incorrect email or password") {
+      if (err.message === "Invalid email or password") {
         return res
           .status(UNAUTHORIZED_STATUS_CODE)
           .send({ message: "Invalid email or password" });
       }
+      return res
+        .status(DEFAULT_ERROR_CODE)
+        .send({ message: "An error occurred on the server" });
     });
 };
 
