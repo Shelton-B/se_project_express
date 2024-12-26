@@ -40,12 +40,14 @@ const getCurrentUser = (req, res) => {
 // verify getCurrentUser is executing correctly
 
 const updateProfile = (req, res) => {
+  console.log("updateprofile has run");
+
   const userId = req.user._id;
   const { name, avatar } = req.body;
   return User.findByIdAndUpdate(
     userId,
     { name, avatar },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true }
   )
     .orFail()
     .then((user) => {
@@ -82,7 +84,17 @@ const userLogIn = (req, res) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.status(SUCCESSFUL_REQUEST_CODE).send({ token });
+      res
+        .status(SUCCESSFUL_REQUEST_CODE)
+        .send({
+          token,
+          user: {
+            name: user.name,
+            email: user.email,
+            avatar: user.avatar,
+            _id: user._id,
+          },
+        });
     })
     .catch((err) => {
       if (err.message === "Invalid email or password") {

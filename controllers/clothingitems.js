@@ -25,11 +25,12 @@ const createItem = (req, res) => {
 
 const getItems = (req, res) => {
   ClothingItem.find({})
+    .sort({ createdAt: -1 })
     .then((items) => res.status(SUCCESSFUL_REQUEST_CODE).send(items))
     .catch(() =>
       res
         .status(DEFAULT_ERROR_CODE)
-        .send({ message: "An error has occurred on the server" }),
+        .send({ message: "An error has occurred on the server" })
     );
 };
 
@@ -72,7 +73,7 @@ const likeItem = (req, res) => {
   ClothingItem.findByIdAndUpdate(
     itemId,
     { $addToSet: { likes: req.user._id } },
-    { new: true },
+    { new: true }
   )
     .orFail()
     .then((item) => res.status(SUCCESSFUL_REQUEST_CODE).send({ item }))
@@ -96,7 +97,7 @@ const dislikeItem = (req, res) => {
   ClothingItem.findByIdAndUpdate(
     itemId,
     { $pull: { likes: req.user._id } },
-    { new: true },
+    { new: true }
   )
     .orFail()
     .then((item) => res.status(SUCCESSFUL_REQUEST_CODE).send({ item }))
