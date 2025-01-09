@@ -7,6 +7,14 @@ const {
   FORBIDDEN_ERROR_CODE,
 } = require("../utils/errors");
 
+const {
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+  NotFoundError,
+  ConflictError,
+} = require("../errors/customerrors");
+
 const createItem = (req, res) => {
   console.log("createItem has run");
   const owner = req.user._id;
@@ -15,23 +23,17 @@ const createItem = (req, res) => {
     .then((item) => res.status(SUCCESSFUL_REQUEST_CODE).send(item))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return res.status(INVALID_DATA_CODE).send({ message: err.message });
+        return next(new BadRequestError("Validation error"));
       }
-      return res
-        .status(DEFAULT_ERROR_CODE)
-        .send({ message: "An error has occurred on the server" });
+      next(err);
     });
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   ClothingItem.find({})
     .sort({ createdAt: -1 })
     .then((items) => res.status(SUCCESSFUL_REQUEST_CODE).send(items))
-    .catch(() =>
-      res
-        .status(DEFAULT_ERROR_CODE)
-        .send({ message: "An error has occurred on the server" })
-    );
+    .catch(next);
 };
 
 const deleteItem = (req, res) => {
@@ -41,9 +43,9 @@ const deleteItem = (req, res) => {
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
-        return res
-          .status(FORBIDDEN_ERROR_CODE)
-          .send({ message: "You do not have permission to delete this item" });
+        return next(
+          new ForbiddenError("You do not have permission to delete this item")
+        );
       }
       return ClothingItem.findByIdAndDelete(itemId).then(() => {
         res
@@ -53,18 +55,12 @@ const deleteItem = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(DATA_NOT_FOUND_CODE)
-          .send({ message: "Item not found" });
+        return next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        return res
-          .status(INVALID_DATA_CODE)
-          .send({ message: "Invalid item ID" });
+        return next(new BadRequestError("Invalid item ID"));
       }
-      return res
-        .status(DEFAULT_ERROR_CODE)
-        .send({ message: "An error has occurred on the server" });
+      next(err);
     });
 };
 
@@ -76,17 +72,19 @@ const likeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(SUCCESSFUL_REQUEST_CODE).send({ item }))
+    .then((item) =>
+      res
+        .status(SUCCESSFUL_REQUEST_CODE)
+        .send({ message: "Item liked successfully", item })
+    )
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
+        return next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        return res.status(INVALID_DATA_CODE).send({ message: err.message });
+        return next(new BadRequestError("Invalid item"));
       }
-      return res
-        .status(DEFAULT_ERROR_CODE)
-        .send({ message: "An error has occurred on the server" });
+      next(err);
     });
 };
 
@@ -100,17 +98,19 @@ const dislikeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(SUCCESSFUL_REQUEST_CODE).send({ item }))
+    .then((item) =>
+      res
+        .status(SUCCESSFUL_REQUEST_CODE)
+        .send({ message: "Item unliked successfully", item })
+    )
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res.status(DATA_NOT_FOUND_CODE).send({ message: err.message });
+        return next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        return res.status(INVALID_DATA_CODE).send({ message: err.message });
+        return next(new BadRequestError("Invalid item"));
       }
-      return res
-        .status(DEFAULT_ERROR_CODE)
-        .send({ message: "An error has occurred on the server" });
+      next(err);
     });
 };
 
