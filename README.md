@@ -25,9 +25,13 @@ This project was built using a combination of modern web technologies:
 
 ## Link
 
-Domain
+Frontend Domain
 
 - https://www.wtwrtoday.twilightparadox.com/
+
+Backend Domain
+
+- https://api.wtwrtoday.twilightparadox.com/
 
 Frontend
 
