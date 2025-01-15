@@ -1,32 +1,23 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/users");
 
-const {
-  DATA_NOT_FOUND_CODE,
-  SUCCESSFUL_REQUEST_CODE,
-  INVALID_DATA_CODE,
-  DEFAULT_ERROR_CODE,
-  UNAUTHORIZED_STATUS_CODE,
-  CONFLICT_ERROR_CODE,
-} = require("../utils/errors");
+const User = require("../models/users");
+const { JWT_SECRET } = require("../utils/config");
+
+const { SUCCESSFUL_REQUEST_CODE } = require("../utils/errors");
 
 const {
   BadRequestError,
   UnauthorizedError,
-  ForbiddenError,
   NotFoundError,
   ConflictError,
-} = require("../errors/customerrors");
+} = require("../customerrors/customerrors");
 
 // BadRequestError = 400
 // UnauthorizedError = 401
 // ForbiddenError = 403
 // NotFoundError = 404
 // ConflictError = 409
-
-const { JWT_SECRET } = require("../utils/config");
-const { Error } = require("mongoose");
 
 const getCurrentUser = (req, res, next) => {
   console.log("getCurrentUser has run");
@@ -40,9 +31,8 @@ const getCurrentUser = (req, res, next) => {
       res.status(SUCCESSFUL_REQUEST_CODE).send(user);
     })
     .catch((err) => {
-      console.error("Error:", err);
       if (err.name === "DocumentNotFoundError") {
-        return next(new NotFoundError("User not found"));
+        next(new NotFoundError("User not found"));
       }
       next(err);
     });
@@ -64,10 +54,10 @@ const updateProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return next(new BadRequestError("Validation error"));
+        next(new BadRequestError("Validation error"));
       }
       if (err.name === "DocumentNotFoundError") {
-        return next(new NotFoundError("User not found"));
+        next(new NotFoundError("User not found"));
       }
       next(err);
     });
@@ -97,7 +87,7 @@ const userLogIn = (req, res, next) => {
     })
     .catch((err) => {
       if (err.message === "Invalid email or password") {
-        return next(new UnauthorizedError("Invalid email or password"));
+        next(new UnauthorizedError("Invalid email or password"));
       }
       next(err);
     });
@@ -123,13 +113,11 @@ const createUser = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.error("Error:", err);
-
       if (err.message === "This email already exists" || err.code === 11000) {
-        return next(new ConflictError("This email already exists"));
+        next(new ConflictError("This email already exists"));
       }
       if (err.name === "ValidationError") {
-        return next(new BadRequestError("Error validating credentials"));
+        next(new BadRequestError("Error validating credentials"));
       }
       next(err);
     });
