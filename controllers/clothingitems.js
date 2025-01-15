@@ -1,11 +1,8 @@
 const ClothingItem = require("../models/clothingitems");
 const { SUCCESSFUL_REQUEST_CODE } = require("../utils/errors");
-
-const {
-  BadRequestError,
-  ForbiddenError,
-  NotFoundError,
-} = require("../customerrors/customerrors");
+const { ForbiddenError } = require("../customerrors/ForbiddenError");
+const { NotFoundError } = require("../customerrors/NotFoundError");
+const { BadRequestError } = require("../customerrors/BadRequestError");
 
 const createItem = (req, res, next) => {
   console.log("createItem has run");

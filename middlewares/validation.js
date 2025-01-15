@@ -65,9 +65,22 @@ const validateId = celebrate({
   }),
 });
 
+const validateProfileUpdate = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().messages({
+      "string.empty": 'The "name" field must be filled in',
+    }),
+    avatar: Joi.string().required().custom(validateURL).messages({
+      "string.empty": 'The "avatar" field must be filled in',
+      "string.uri": 'The "avatar" field must be a valid URL',
+    }),
+  }),
+});
+
 module.exports = {
   validateCreateClothingItem,
   validateNewUserInfo,
   validateUserLogin,
   validateId,
+  validateProfileUpdate,
 };

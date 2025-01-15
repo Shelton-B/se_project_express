@@ -1,7 +1,8 @@
-const errorHandler = (req, res, next, err) => {
+const errorHandler = (err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "An error occurred on the server";
-  console.error(`[${statusCode}] ${message}`);
+  res.status(statusCode).send({ message });
+  next();
 };
 
 module.exports = errorHandler;

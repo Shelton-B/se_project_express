@@ -5,13 +5,10 @@ const User = require("../models/users");
 const { JWT_SECRET } = require("../utils/config");
 
 const { SUCCESSFUL_REQUEST_CODE } = require("../utils/errors");
-
-const {
-  BadRequestError,
-  UnauthorizedError,
-  NotFoundError,
-  ConflictError,
-} = require("../customerrors/customerrors");
+const { BadRequestError } = require("../customerrors/BadRequestError");
+const { UnauthorizedError } = require("../customerrors/UnauthorizedError");
+const { NotFoundError } = require("../customerrors/NotFoundError");
+const { ConflictError } = require("../customerrors/ConflictError");
 
 // BadRequestError = 400
 // UnauthorizedError = 401

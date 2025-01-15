@@ -14,3 +14,25 @@ This project was built using a combination of modern web technologies:
   • Secure password management using bcrypt for hashing.
   • JSON Web Tokens (JWT) for managing user authentication sessions.
   • Middleware to protect routes and restrict access to authorized users.
+- PM2: Process manager for running and managing the Node.js application.
+- nginx: Web server for handling request redirection and serving the frontend.
+- Joi: Data validation library for validating requests.
+- Celebrate: Middleware for request validation using Joi.
+- Validator: String validation library for input data checks.
+- Winston: Logging library for logging requests and errors.
+- SSL: Secure Socket Layer for encrypting data in transit.
+- Google Cloud: Cloud platform for hosting the virtual machine and server.
+
+## Link
+
+Domain
+
+- https://www.wtwrtoday.twilightparadox.com/
+
+Frontend
+
+- https://shelton-b.github.io/se_project_react/
+
+Backend
+
+- https://github.com/Shelton-B/se_project_express/
